@@ -1,14 +1,19 @@
 //
+// ContentView.swift
+// Swift Charts Examples
+//
 // Copyright © 2022 Swift Charts Examples.
 // Open Source - MIT License
+//
 
 import SwiftUI
 
 struct ContentView: View {
+    
     @StateObject private var imageCache = ImagesCache()
     @State private var selectedChartType: ChartType?
     @State var filterCategory: ChartCategory = .all
-
+    
     var body: some View {
         NavigationSplitView {
             List(selection: $selectedChartType) {
@@ -24,11 +29,11 @@ struct ContentView: View {
                     }
                 }
             }
-            #if os(macOS)
+#if os(macOS)
             .listStyle(.bordered)
-            #else
+#else
             .listStyle(.insetGrouped)
-            #endif
+#endif
             .navigationTitle("Charts")
             .toolbar {
                 toolbarItems
@@ -43,7 +48,7 @@ struct ContentView: View {
             }
         }
     }
-
+    
     private var displayedCategories: [ChartCategory] {
         var categories = ChartCategory.allCases.filter { $0 != .all }
         if filterCategory != .all {
@@ -51,12 +56,12 @@ struct ContentView: View {
         }
         return categories
     }
-
+    
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            #if os(macOS)
+#if os(macOS)
             picker
-            #else
+#else
             Menu {
                 picker
             } label: {
@@ -65,7 +70,7 @@ struct ContentView: View {
             // Temporary fix for the menu selection picker not updating to show the selected item
             // Broken since Xcode 14 beta 4 (Reported FB11104547)
             .id(UUID())
-            #endif
+#endif
         }
     }
     
@@ -84,11 +89,11 @@ struct ContentView: View {
     private func preview(chart: ChartType) -> some View {
         VStack(alignment: .leading) {
             Text(chart.title)
-
+            
             // causes UI to hang for several seconds when scrolling
             // from 100% CPU usage when cells are reloaded
-//            chart.view
-
+            //            chart.view
+            
             // workaround to address hanging UI
             // Reported FB10335209
             if let image = imageCache.images[chart] {
@@ -100,7 +105,7 @@ struct ContentView: View {
 
 @MainActor private final class ImagesCache: ObservableObject {
     @Published var images: [ChartType: XImage] = [:]
-
+    
     init() {
         ChartType.allCases.forEach { chart in
             let view = chart.view
@@ -113,17 +118,17 @@ struct ContentView: View {
                     }
                 }
             let renderer = ImageRenderer(content: view)
-            #if os(macOS)
+#if os(macOS)
             renderer.scale = NSApplication.shared.mainWindow?.backingScaleFactor ?? 1
             if let image = renderer.nsImage {
                 images[chart] = image
             }
-            #else
+#else
             renderer.scale = UIScreen.main.scale
             if let image = renderer.uiImage {
                 images[chart] = image
             }
-            #endif
+#endif
         }
     }
 }
@@ -138,7 +143,7 @@ struct AccessiblePreviewImage: View, AXChartDescriptorRepresentable {
             .aspectRatio(contentMode: .fit)
             .frame(maxWidth: 320)
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            // Remove the image trait so VoiceOver doesn't attempt to describe image contents
+        // Remove the image trait so VoiceOver doesn't attempt to describe image contents
             .accessibilityRemoveTraits(.isImage)
             .accessibilityChartDescriptor(self)
     }
@@ -147,25 +152,25 @@ struct AccessiblePreviewImage: View, AXChartDescriptorRepresentable {
         guard let chartType = ChartType(rawValue: id) else {
             fatalError("Unknown Chart Type")
         }
-
+        
         if let chartDescriptor = chartType.chartDescriptor {
             return chartDescriptor
         }
-
+        
         let axis = AXNumericDataAxisDescriptor(title: "", range: 0...0, gridlinePositions: []) { _ in "" }
         return AXChartDescriptor(title: "", summary: nil, xAxis: axis, yAxis: axis, series: [])
-
+        
         /*
          // TODO: Something like this might be better, but the if always evaluates to false
          if
-             let chartType = ChartType(rawValue: id),
-             let view = chartType.view as? any View & AXChartDescriptorRepresentable {
-             return view.makeChartDescriptor()
+         let chartType = ChartType(rawValue: id),
+         let view = chartType.view as? any View & AXChartDescriptorRepresentable {
+         return view.makeChartDescriptor()
          } else {
-             let axis = AXNumericDataAxisDescriptor(title: "", range: 0.0...0.0, gridlinePositions: [], valueDescriptionProvider: { _ in
-                 return ""
-             })
-             return AXChartDescriptor(title: "", summary: nil, xAxis: axis, yAxis: axis, series: [])
+         let axis = AXNumericDataAxisDescriptor(title: "", range: 0.0...0.0, gridlinePositions: [], valueDescriptionProvider: { _ in
+         return ""
+         })
+         return AXChartDescriptor(title: "", summary: nil, xAxis: axis, yAxis: axis, series: [])
          }
          */
     }

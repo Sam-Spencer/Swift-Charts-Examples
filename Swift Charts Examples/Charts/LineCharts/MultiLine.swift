@@ -1,13 +1,18 @@
 //
-// Copyright © 2022 Swift Charts Examples.
-// Open Source - MIT License
+//  Multiline.swift
+//  Swift Charts Examples
+//
+//  Copyright © 2022 Swift Charts Examples.
+//  Open Source - MIT License
+//
 
 import SwiftUI
 import Charts
 
 struct MultiLine: View {
+    
     var isOverview: Bool
-
+    
     let data = LocationData.last30Days
     
     var body: some View {
@@ -22,7 +27,7 @@ struct MultiLine: View {
             .navigationBarTitle(ChartType.multiLine.title, displayMode: .inline)
         }
     }
-
+    
     private var chart: some View {
         Chart(data) { series in
             ForEach(series.sales, id: \.weekday) { element in

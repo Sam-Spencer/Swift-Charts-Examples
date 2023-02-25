@@ -1,16 +1,21 @@
 //
-// Copyright © 2022 Swift Charts Examples.
-// Open Source - MIT License
+//  GradientLine.swift
+//  Swift Charts Examples
+//
+//  Copyright © 2022 Swift Charts Examples.
+//  Open Source - MIT License
+//
 
 import SwiftUI
 import Charts
 
 struct GradientLine: View {
+    
     var isOverview: Bool
-
+    
     @State private var selectedDate: Date?
     @State var data = WeatherData.hourlyUVIndex
-
+    
     var body: some View {
         Group {
             if isOverview {
@@ -27,7 +32,7 @@ struct GradientLine: View {
         }
         .accessibilityChartDescriptor(self)
     }
-
+    
     private var chart: some View {
         Chart {
             RectangleMark(
@@ -51,7 +56,7 @@ struct GradientLine: View {
                         )
                         .interpolationMethod(.cardinal)
                         .foregroundStyle(.black.opacity(0.4))
-
+                        
                         LineMark(
                             x: .value("hour", hour.date),
                             y: .value("uvIndex", hour.uvIndex)
@@ -61,7 +66,7 @@ struct GradientLine: View {
                         .symbol(Circle().strokeBorder(style: StrokeStyle(lineWidth: 0)))
                         .symbolSize(hour.date == max.date ? CGSize(width: 10, height: 10) : .zero)
                     }
-
+                    
                     PointMark(
                         x: .value("hour", max.date),
                         y: .value("uvIndex", max.uvIndex)
@@ -75,24 +80,24 @@ struct GradientLine: View {
                     }
                 }
             }
-
+            
             if let selectedDate, let uvIndex = WeatherData.hourlyUVIndex.first(where: { $0.date == selectedDate })?.uvIndex {
                 RuleMark(x: .value("hour", selectedDate))
-                    #if os(macOS)
+#if os(macOS)
                     .foregroundStyle(Color.primary)
-                    #else
+#else
                     .foregroundStyle(Color(.label))
-                    #endif
+#endif
                 PointMark(
                     x: .value("hour", selectedDate),
                     y: .value("uvIndex", uvIndex)
                 )
                 .symbolSize(CGSize(width: 15, height: 15))
-                #if os(macOS)
+#if os(macOS)
                 .foregroundStyle(Color.primary)
-                #else
+#else
                 .foregroundStyle(Color(.label))
-                #endif
+#endif
             }
         }
         .chartYScale(domain: 0...14)
@@ -103,7 +108,7 @@ struct GradientLine: View {
                 }
                 AxisGridLine()
             }
-
+            
             AxisMarks(preset: .inset, position: .leading, values: .automatic(desiredCount: 14)) { axisValue in
                 switch axisValue.index {
                 case 1:
@@ -127,7 +132,7 @@ struct GradientLine: View {
                 AxisGridLine()
                 AxisTick()
             }
-
+            
             AxisMarks(position: .top, values: .automatic(desiredCount: 24)) { value in
                 if value.index % 2 != 0 {
                     AxisValueLabel("\(WeatherData.hourlyUVIndex[value.index].uvIndex)", anchor: .bottom)
@@ -176,7 +181,7 @@ extension GradientLine: AXChartDescriptorRepresentable {
     func makeChartDescriptor() -> AXChartDescriptor {
         let min = data.map(\.uvIndex).min() ?? 0
         let max = data.map(\.uvIndex).max() ?? 0
-
+        
         // A closure that takes a date and converts it to a label for axes
         let dateTupleStringConverter: (((date: Date, uvIndex: Int)) -> (String)) = { dataPoint in
             dataPoint.date.formatted(date: .omitted, time: .standard)
@@ -186,13 +191,13 @@ extension GradientLine: AXChartDescriptorRepresentable {
             title: "Time of day",
             categoryOrder: data.map { dateTupleStringConverter($0) }
         )
-
+        
         let yAxis = AXNumericDataAxisDescriptor(
             title: "UV Index value",
             range: Double(min)...Double(max),
             gridlinePositions: []
         ) { value in "\(Int(value))" }
-
+        
         let series = AXDataSeriesDescriptor(
             name: "UV Index",
             isContinuous: true,
@@ -200,7 +205,7 @@ extension GradientLine: AXChartDescriptorRepresentable {
                 .init(x: dateTupleStringConverter($0), y: Double($0.uvIndex))
             }
         )
-
+        
         return AXChartDescriptor(
             title: "UV Index",
             summary: nil,
@@ -210,6 +215,7 @@ extension GradientLine: AXChartDescriptorRepresentable {
             series: [series]
         )
     }
+    
 }
 
 // MARK: - Preview

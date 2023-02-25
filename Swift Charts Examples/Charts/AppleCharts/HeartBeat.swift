@@ -1,11 +1,16 @@
 //
+// HeartBeat.swift
+// Swift Charts Examples
+//
 // Copyright © 2022 Swift Charts Examples.
 // Open Source - MIT License
+//
 
 import SwiftUI
 import Charts
 
 struct HeartBeat: View {
+    
     var isOverview: Bool
     
     @State private var data = HealthData.ecgSample
