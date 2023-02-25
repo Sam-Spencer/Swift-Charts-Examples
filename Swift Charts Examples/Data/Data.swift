@@ -48,16 +48,16 @@ enum SalesData {
         (day: date(year: 2022, month: 6, day: 5), sales: 250),
         (day: date(year: 2022, month: 6, day: 6), sales: 146)
     ].map { Sale(day: $0.day, sales: $0.sales) }
-
+    
     /// Total sales for the last 30 days.
     static var last30DaysTotal: Int {
         last30Days.map { $0.sales }.reduce(0, +)
     }
-
+    
     static var last30DaysAverage: Double {
         Double(last30DaysTotal / last30Days.count)
     }
-
+    
     /// Sales by month for the last 12 months.
     static let last12Months = [
         (month: date(year: 2021, month: 7), sales: 3952, dailyAverage: 127, dailyMin: 95, dailyMax: 194),
@@ -73,12 +73,12 @@ enum SalesData {
         (month: date(year: 2022, month: 5), sales: 4559, dailyAverage: 147, dailyMin: 104, dailyMax: 242),
         (month: date(year: 2022, month: 6), sales: 1023, dailyAverage: 170, dailyMin: 120, dailyMax: 250)
     ]
-
+    
     /// Total sales for the last 12 months.
     static var last12MonthsTotal: Int {
         last12Months.map { $0.sales }.reduce(0, +)
     }
-
+    
     static var last12MonthsDailyAverage: Int {
         last12Months.map { $0.dailyAverage }.reduce(0, +) / last12Months.count
     }
@@ -95,11 +95,11 @@ enum LocationData {
     struct Series: Identifiable {
         /// The name of the city.
         let city: String
-
+        
         /// Average daily sales for each weekday.
         /// The `weekday` property is a `Date` that represents a weekday.
         let sales: [(weekday: Date, sales: Int)]
-
+        
         /// The identifier for the series.
         var id: String { city }
     }
@@ -125,7 +125,7 @@ enum LocationData {
             (weekday: date(year: 2022, month: 5, day: 7), sales: 137)
         ])
     ]
-
+    
     /// Sales by location and weekday for the last 30 days.
     static let last30Days: [Series] = [
         .init(city: "Cupertino", sales: [
@@ -193,21 +193,21 @@ enum LocationData {
             (weekday: date(year: 2022, month: 5, day: 30), sales: 87)
         ])
     ]
-
+    
     /// The best weekday and location for the last 30 days.
     static let last30DaysBest = (
         city: "San Francisco",
         weekday: date(year: 2022, month: 5, day: 8),
         sales: 137
     )
-
+    
     /// The best weekday and location for the last 12 months.
     static let last12MonthsBest = (
         city: "San Francisco",
         weekday: date(year: 2022, month: 5, day: 8),
         sales: 113
     )
-
+    
     /// Sales by location and weekday for the last 12 months.
     static let last12Months: [Series] = [
         .init(city: "Cupertino", sales: [
@@ -235,17 +235,17 @@ struct PopulationByAgeData {
     /// A data series for the bars.
     struct Series: Identifiable {
         typealias Population = (ageRange: String, percentage: Int)
-
+        
         /// Sex.
         let sex: String
-
+        
         /// Percentage population for ageRange
         let population: [Population]
-
+        
         /// The identifier for the series.
         var id: String { sex }
     }
-
+    
     /// Sales by location and weekday for the last 12 months.
     static let example: [Series] = [
         .init(sex: "Male", population: [
@@ -280,14 +280,14 @@ struct DataUsageData {
     struct Series: Identifiable {
         /// Data Group.
         let category: String
-
+        
         /// Size of data in gigabytes?
         let size: Double
-
+        
         /// The identifier for the series.
         var id: String { category }
     }
-
+    
     static let example: [Series] = [
         .init(category: "Apps", size: 61.6),
         .init(category: "Photos", size: 8.2),
@@ -303,48 +303,48 @@ enum HeartRateData {
     static let lastWeek = [
         (weekday: date(year: 2022, month: 7, day: 1), dailyAverage: 127, dailyMin: 95, dailyMax: 194),
         (weekday: date(year: 2022, month: 7, day: 1), dailyAverage: 130, dailyMin: 200, dailyMax: 239),
-
+        
         (weekday: date(year: 2022, month: 7, day: 2), dailyAverage: 131, dailyMin: 101, dailyMax: 184),
-
+        
         (weekday: date(year: 2022, month: 7, day: 3), dailyAverage: 136, dailyMin: 96, dailyMax: 193),
         (weekday: date(year: 2022, month: 7, day: 3), dailyAverage: 136, dailyMin: 80, dailyMax: 93),
-
+        
         (weekday: date(year: 2022, month: 7, day: 4), dailyAverage: 134, dailyMin: 104, dailyMax: 202),
-
+        
         (weekday: date(year: 2022, month: 7, day: 5), dailyAverage: 129, dailyMin: 90, dailyMax: 95),
         (weekday: date(year: 2022, month: 7, day: 5), dailyAverage: 129, dailyMin: 96, dailyMax: 190),
-
+        
         (weekday: date(year: 2022, month: 7, day: 6), dailyAverage: 136, dailyMin: 96, dailyMax: 203),
-
+        
         (weekday: date(year: 2022, month: 7, day: 7), dailyAverage: 134, dailyMin: 98, dailyMax: 200)
     ]
-
+    
     // MARK: - Static constants
-
+    
     static let minBPM: Int = {
         Self.lastWeek.min { a, b in
             a.dailyMin < b.dailyMin
         }?.dailyMin ?? 0
     }()
-
+    
     static let maxBPM: Int = {
         Self.lastWeek.max { a, b in
             a.dailyMax < b.dailyMax
         }?.dailyMax ?? 0
     }()
-
+    
     static let earliestDate: Date = {
         Self.lastWeek.min { a, b in
             a.weekday < b.weekday
         }?.weekday ?? Date()
     }()
-
+    
     static let latestDate: Date = {
         Self.lastWeek.max { a, b in
             a.weekday < b.weekday
         }?.weekday ?? Date()
     }()
-
+    
     static let dateInterval: DateInterval = {
         DateInterval(start: earliestDate, end: latestDate)
     }()
@@ -360,7 +360,7 @@ enum TimeSheetData {
         (department: "Butchery", clockIn: date(year: 2022, month: 6, day: 13, hour: 13, minutes: 01), clockOut: date(year: 2022, month: 6, day: 13, hour: 15, minutes: 10)),
         (department: "Butchery", clockIn: date(year: 2022, month: 6, day: 13, hour: 15, minutes: 33), clockOut: date(year: 2022, month: 6, day: 13, hour: 17, minutes: 01)),
         (department: "Vegetables", clockIn: date(year: 2022, month: 6, day: 13, hour: 17, minutes: 02), clockOut: date(year: 2022, month: 6, day: 13, hour: 18, minutes: 08))
-        ]
+    ]
     /// Time Sheet Date for the last week
     static let lastWeek = [
         /// Monday
@@ -390,57 +390,57 @@ enum TimeSheetData {
 // MARK: - Weather Data
 
 enum WeatherData {
-	static let hourlyUVIndex: [(date: Date, uvIndex: Int)] = [
-		(.startOfDay.addingTimeInterval(3600*0), 0),
-		(.startOfDay.addingTimeInterval(3600*1), 0),
-		(.startOfDay.addingTimeInterval(3600*2), 0),
-		(.startOfDay.addingTimeInterval(3600*3), 0),
-		(.startOfDay.addingTimeInterval(3600*4), 0),
-		(.startOfDay.addingTimeInterval(3600*5), 0),
-		(.startOfDay.addingTimeInterval(3600*6), 0),
-		(.startOfDay.addingTimeInterval(3600*7), 1),
-		(.startOfDay.addingTimeInterval(3600*8), 4),
-		(.startOfDay.addingTimeInterval(3600*9), 6),
-		(.startOfDay.addingTimeInterval(3600*10), 9),
-		(.startOfDay.addingTimeInterval(3600*11), 12),
-		(.startOfDay.addingTimeInterval(3600*12), 12),
-		(.startOfDay.addingTimeInterval(3600*13), 11),
-		(.startOfDay.addingTimeInterval(3600*14), 9),
-		(.startOfDay.addingTimeInterval(3600*15), 6),
-		(.startOfDay.addingTimeInterval(3600*16), 3),
-		(.startOfDay.addingTimeInterval(3600*17), 1),
-		(.startOfDay.addingTimeInterval(3600*18), 0),
-		(.startOfDay.addingTimeInterval(3600*19), 0),
-		(.startOfDay.addingTimeInterval(3600*20), 0),
-		(.startOfDay.addingTimeInterval(3600*21), 0),
-		(.startOfDay.addingTimeInterval(3600*22), 0),
-		(.startOfDay.addingTimeInterval(3600*23), 0)
-	]
+    static let hourlyUVIndex: [(date: Date, uvIndex: Int)] = [
+        (.startOfDay.addingTimeInterval(3600*0), 0),
+        (.startOfDay.addingTimeInterval(3600*1), 0),
+        (.startOfDay.addingTimeInterval(3600*2), 0),
+        (.startOfDay.addingTimeInterval(3600*3), 0),
+        (.startOfDay.addingTimeInterval(3600*4), 0),
+        (.startOfDay.addingTimeInterval(3600*5), 0),
+        (.startOfDay.addingTimeInterval(3600*6), 0),
+        (.startOfDay.addingTimeInterval(3600*7), 1),
+        (.startOfDay.addingTimeInterval(3600*8), 4),
+        (.startOfDay.addingTimeInterval(3600*9), 6),
+        (.startOfDay.addingTimeInterval(3600*10), 9),
+        (.startOfDay.addingTimeInterval(3600*11), 12),
+        (.startOfDay.addingTimeInterval(3600*12), 12),
+        (.startOfDay.addingTimeInterval(3600*13), 11),
+        (.startOfDay.addingTimeInterval(3600*14), 9),
+        (.startOfDay.addingTimeInterval(3600*15), 6),
+        (.startOfDay.addingTimeInterval(3600*16), 3),
+        (.startOfDay.addingTimeInterval(3600*17), 1),
+        (.startOfDay.addingTimeInterval(3600*18), 0),
+        (.startOfDay.addingTimeInterval(3600*19), 0),
+        (.startOfDay.addingTimeInterval(3600*20), 0),
+        (.startOfDay.addingTimeInterval(3600*21), 0),
+        (.startOfDay.addingTimeInterval(3600*22), 0),
+        (.startOfDay.addingTimeInterval(3600*23), 0)
+    ]
 }
 
 extension Date {
-	static var startOfDay: Date {
-		Calendar.current.startOfDay(for: .now)
-	}
+    static var startOfDay: Date {
+        Calendar.current.startOfDay(for: .now)
+    }
 }
 
 extension Date {
-	func nearestHour() -> Date? {
-		var components = NSCalendar.current.dateComponents([.minute, .second, .nanosecond], from: self)
-		let minute = components.minute ?? 0
-		let second = components.second ?? 0
-		let nanosecond = components.nanosecond ?? 0
-		components.minute = minute >= 30 ? 60 - minute : -minute
-		components.second = -second
-		components.nanosecond = -nanosecond
-		return Calendar.current.date(byAdding: components, to: self)
-	}
+    func nearestHour() -> Date? {
+        var components = NSCalendar.current.dateComponents([.minute, .second, .nanosecond], from: self)
+        let minute = components.minute ?? 0
+        let second = components.second ?? 0
+        let nanosecond = components.nanosecond ?? 0
+        components.minute = minute >= 30 ? 60 - minute : -minute
+        components.second = -second
+        components.nanosecond = -nanosecond
+        return Calendar.current.date(byAdding: components, to: self)
+    }
 }
 
 extension Array {
-	func appending(contentsOf: [Element]) -> Array {
-		var a = Array(self)
-		a.append(contentsOf: contentsOf)
-		return a
-	}
+    func appending(contentsOf: [Element]) -> Array {
+        var a = Array(self)
+        a.append(contentsOf: contentsOf)
+        return a
+    }
 }

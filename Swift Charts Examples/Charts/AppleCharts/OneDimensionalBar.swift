@@ -50,7 +50,6 @@ struct OneDimensionalBar: View {
             }
             .navigationBarTitle(ChartType.oneDimensionalBar.title, displayMode: .inline)
         }
-        
     }
     
     private var chart: some View {
