@@ -1,11 +1,16 @@
 //
-// Copyright © 2022 Swift Charts Examples.
-// Open Source - MIT License
+//  ScrollingBar.swift
+//  Swift Charts Examples
+//
+//  Copyright © 2022 Swift Charts Examples.
+//  Open Source - MIT License
+//
 
 import Charts
 import SwiftUI
 
 struct ScrollingBar: View {
+    
     var isOverview: Bool
 
     @State private var scrollWidth = 450.0

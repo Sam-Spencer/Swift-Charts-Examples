@@ -1,31 +1,36 @@
 //
-// Copyright © 2022 Swift Charts Examples.
-// Open Source - MIT License
+//  PyramidChart.swift
+//  Swift Charts Examples
+//
+//  Copyright © 2022 Swift Charts Examples.
+//  Open Source - MIT License
+//
 
 import SwiftUI
 import Charts
 
 struct PyramidChart: View {
-	var isOverview: Bool
-
+    
+    var isOverview: Bool
+    
     @State var data = PopulationByAgeData.example
     @State var leftColor: Color = .green
     @State var rightColor: Color = .blue
     @State var barHeight: CGFloat = 10.0
     
     var body: some View {
-		if isOverview {
-			chart
-		} else {
-			List {
-				Section {
-					chart
-				}
-
-				customisation
-			}
-			.navigationBarTitle(ChartType.pyramid.title, displayMode: .inline)
-		}
+        if isOverview {
+            chart
+        } else {
+            List {
+                Section {
+                    chart
+                }
+                
+                customisation
+            }
+            .navigationBarTitle(ChartType.pyramid.title, displayMode: .inline)
+        }
     }
     
     /// Takes the age ranges and adds a more audio friendy description
@@ -40,36 +45,36 @@ struct PyramidChart: View {
         return ages.joined(separator: " to ")
     }
     
-	private var chart: some View {
-		Chart(data) { series in
-			ForEach(series.population, id: \.percentage) { element in
+    private var chart: some View {
+        Chart(data) { series in
+            ForEach(series.population, id: \.percentage) { element in
                 chartContent(series: series, element: element)
-			}
-			.foregroundStyle(series.sex == "Male" ? rightColor.gradient : leftColor.gradient)
-			.interpolationMethod(.catmullRom)
-		}
-		.chartYAxis {
-			AxisMarks(preset: .aligned, position: .automatic) { _ in
-				AxisValueLabel(centered: true)
-			}
-		}
-		.chartXAxis {
-			AxisMarks(preset: .aligned, position: .automatic) { value in
-				let rawValue = value.as(Int.self)!
-				let percentage = abs(Double(rawValue) / 100)
-
-				AxisGridLine()
-				AxisValueLabel(percentage.formatted(.percent))
-			}
-		}
-		.chartLegend(position: .top, alignment: .center)
-		.chartLegend(isOverview ? .hidden : .automatic)
+            }
+            .foregroundStyle(series.sex == "Male" ? rightColor.gradient : leftColor.gradient)
+            .interpolationMethod(.catmullRom)
+        }
+        .chartYAxis {
+            AxisMarks(preset: .aligned, position: .automatic) { _ in
+                AxisValueLabel(centered: true)
+            }
+        }
+        .chartXAxis {
+            AxisMarks(preset: .aligned, position: .automatic) { value in
+                let rawValue = value.as(Int.self)!
+                let percentage = abs(Double(rawValue) / 100)
+                
+                AxisGridLine()
+                AxisValueLabel(percentage.formatted(.percent))
+            }
+        }
+        .chartLegend(position: .top, alignment: .center)
+        .chartLegend(isOverview ? .hidden : .automatic)
         .accessibilityChartDescriptor(self)
-		.chartYAxis(isOverview ? .hidden : .automatic)
-		.chartXAxis(isOverview ? .hidden : .automatic)
-		.frame(height: isOverview ? 200 : 340)
-	}
-
+        .chartYAxis(isOverview ? .hidden : .automatic)
+        .chartXAxis(isOverview ? .hidden : .automatic)
+        .frame(height: isOverview ? 200 : 340)
+    }
+    
     // Workaround for previews. Swift compiler seems to have problems checking expression type
     // for this chart when used directly inside Chart/ForEach, and the preview builds end up timing out.
     @ChartContentBuilder func chartContent(series: PopulationByAgeData.Series, element: PopulationByAgeData.Series.Population) -> some ChartContent {
@@ -149,7 +154,7 @@ struct PyramidChart: View {
 // TODO: This is virtually the same as TwoBarsOverview's chartDescriptor. Use a protocol?
 extension PyramidChart: AXChartDescriptorRepresentable {
     func makeChartDescriptor() -> AXChartDescriptor {
-
+        
         // Create a descriptor for each Series object
         // as that allows auditory comparison with VoiceOver
         // much like the chart does visually and allows individual city charts to be played
@@ -163,7 +168,7 @@ extension PyramidChart: AXChartDescriptorRepresentable {
                 }
             )
         }
-
+        
         // Get the minimum/maximum within each series
         // and then the limits of the resulting list
         // to pass in as the Y axis limits
@@ -173,28 +178,28 @@ extension PyramidChart: AXChartDescriptorRepresentable {
             let localMax = percentages.max() ?? 0
             return (localMin, localMax)
         }
-
+        
         let min = limits.map { $0.0 }.min() ?? 0
         let max = limits.map { $0.1 }.max() ?? 0
-
+        
         // Get the unique age ranges to mark the x-axis
         // and then sort them
         let uniqueRanges = Set( data
             .map { $0.population.map { $0.ageRange } }
             .joined() )
         let ranges = Array(uniqueRanges).sorted()
-
+        
         let xAxis = AXCategoricalDataAxisDescriptor(
             title: "Age Ranges",
             categoryOrder: ranges.map { description(for: $0) }
         )
-
+        
         let yAxis = AXNumericDataAxisDescriptor(
             title: "Population percentage",
             range: Double(min)...Double(max),
             gridlinePositions: []
         ) { value in "\((value/100.0).formatted(.percent))" }
-
+        
         return AXChartDescriptor(
             title: "Population by age",
             summary: nil,
@@ -211,6 +216,6 @@ extension PyramidChart: AXChartDescriptorRepresentable {
 struct PyramidChart_Previews: PreviewProvider {
     static var previews: some View {
         PyramidChart(isOverview: true)
-		PyramidChart(isOverview: false)
+        PyramidChart(isOverview: false)
     }
 }
